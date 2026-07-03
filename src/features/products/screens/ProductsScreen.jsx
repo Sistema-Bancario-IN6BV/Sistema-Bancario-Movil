@@ -1,10 +1,11 @@
 // src/features/products/screens/ProductsScreen.jsx
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { Text, ScrollView, RefreshControl, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
-import { COLORS, SPACING, FONT, FONT_SIZE } from '@/shared/constants/theme';
+import { SPACING, FONT, FONT_SIZE } from '@/shared/constants/theme';
+import { useColors } from '@/shared/theme/ThemeProvider';
 import { SectionTitle, EmptyState } from '@/shared/components/common/Common';
 import Button from '@/shared/components/common/Button';
 import { useProducts } from '@/features/products/hooks/useProducts';
@@ -12,6 +13,8 @@ import ProductCard from '@/features/products/components/ProductCard';
 
 export default function ProductsScreen({ navigation }) {
   const { t } = useTranslation();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { products, refreshProducts } = useProducts();
   const [refreshing, setRefreshing] = useState(false);
 
@@ -25,7 +28,7 @@ export default function ProductsScreen({ navigation }) {
     <SafeAreaView style={styles.safe} edges={['top']}>
       <ScrollView
         contentContainerStyle={styles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={COLORS.primary} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
       >
         <Text style={styles.title}>{t('products.title')}</Text>
 
@@ -50,9 +53,11 @@ export default function ProductsScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: COLORS.background },
-  content: { padding: SPACING.gutter, paddingBottom: SPACING.xl },
-  title: { fontFamily: FONT.bold, fontSize: FONT_SIZE.headline, color: COLORS.text, marginBottom: SPACING.md },
-  historyBtn: { marginBottom: SPACING.sm },
-});
+function createStyles(colors) {
+  return StyleSheet.create({
+    safe: { flex: 1, backgroundColor: colors.background },
+    content: { padding: SPACING.gutter, paddingBottom: SPACING.xl },
+    title: { fontFamily: FONT.bold, fontSize: FONT_SIZE.headline, color: colors.text, marginBottom: SPACING.md },
+    historyBtn: { marginBottom: SPACING.sm },
+  });
+}

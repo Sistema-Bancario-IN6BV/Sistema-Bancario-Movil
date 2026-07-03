@@ -1,10 +1,11 @@
 // src/features/profile/screens/SecurityScreen.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { View, Text, Switch, Pressable, StyleSheet, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
-import { COLORS, SPACING, RADIUS, FONT, FONT_SIZE } from '@/shared/constants/theme';
+import { SPACING, RADIUS, FONT, FONT_SIZE } from '@/shared/constants/theme';
+import { useColors } from '@/shared/theme/ThemeProvider';
 import { Card, Divider } from '@/shared/components/common/Common';
 import { useSecurityStore } from '@/security/securityStore';
 import { biometricAvailable } from '@/security/biometric';
@@ -14,6 +15,8 @@ import i18n, { setAppLanguage } from '@/shared/i18n';
 
 export default function SecurityScreen() {
   const { t } = useTranslation();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const biometricEnabled = useSecurityStore((s) => s.biometricEnabled);
   const hasPin = useSecurityStore((s) => s.hasPin);
   const setBiometricEnabled = useSecurityStore((s) => s.setBiometricEnabled);
@@ -47,7 +50,7 @@ export default function SecurityScreen() {
       {/* Biometría */}
       <Card>
         <View style={styles.row}>
-          <View style={styles.rowIcon}><MaterialIcons name="fingerprint" size={22} color={COLORS.primary} /></View>
+          <View style={styles.rowIcon}><MaterialIcons name="fingerprint" size={22} color={colors.primary} /></View>
           <View style={styles.flex}>
             <Text style={styles.rowTitle}>{t('profile.biometric')}</Text>
             <Text style={styles.rowHint}>{available ? t('profile.biometricHint') : t('security.biometricUnavailable')}</Text>
@@ -55,8 +58,8 @@ export default function SecurityScreen() {
           <Switch
             value={biometricEnabled}
             onValueChange={onToggleBiometric}
-            trackColor={{ true: COLORS.secondaryContainer, false: COLORS.outlineVariant }}
-            thumbColor={biometricEnabled ? COLORS.secondary : COLORS.surface}
+            trackColor={{ true: colors.secondaryContainer, false: colors.outlineVariant }}
+            thumbColor={biometricEnabled ? colors.secondary : colors.surface}
           />
         </View>
       </Card>
@@ -64,12 +67,12 @@ export default function SecurityScreen() {
       {/* PIN */}
       <Card style={styles.spaced}>
         <Pressable onPress={() => setPasswordVisible(true)} style={styles.row}>
-          <View style={styles.rowIcon}><MaterialIcons name="pin" size={22} color={COLORS.primary} /></View>
+          <View style={styles.rowIcon}><MaterialIcons name="pin" size={22} color={colors.primary} /></View>
           <View style={styles.flex}>
             <Text style={styles.rowTitle}>{t('profile.pin')}</Text>
             <Text style={styles.rowHint}>{hasPin ? t('profile.changePin') : t('profile.setPin')}</Text>
           </View>
-          <MaterialIcons name="chevron-right" size={22} color={COLORS.textLight} />
+          <MaterialIcons name="chevron-right" size={22} color={colors.textLight} />
         </Pressable>
       </Card>
 
@@ -104,27 +107,31 @@ export default function SecurityScreen() {
 }
 
 function LangOption({ label, active, onPress }) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <Pressable onPress={onPress} style={styles.langRow}>
       <Text style={styles.langLabel}>{label}</Text>
       <MaterialIcons
         name={active ? 'radio-button-checked' : 'radio-button-unchecked'}
         size={22}
-        color={active ? COLORS.primary : COLORS.outlineVariant}
+        color={active ? colors.primary : colors.outlineVariant}
       />
     </Pressable>
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: COLORS.background, padding: SPACING.gutter },
-  row: { flexDirection: 'row', alignItems: 'center', gap: SPACING.md },
-  rowIcon: { width: 40, height: 40, borderRadius: 12, backgroundColor: COLORS.lightTealSurface, alignItems: 'center', justifyContent: 'center' },
-  flex: { flex: 1 },
-  rowTitle: { fontFamily: FONT.bold, fontSize: FONT_SIZE.body, color: COLORS.text },
-  rowHint: { fontFamily: FONT.regular, fontSize: FONT_SIZE.label, color: COLORS.textLight, marginTop: 2 },
-  spaced: { marginTop: SPACING.md },
-  cardTitle: { fontFamily: FONT.bold, fontSize: FONT_SIZE.title, color: COLORS.text },
-  langRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: SPACING.md },
-  langLabel: { fontFamily: FONT.bold, fontSize: FONT_SIZE.body, color: COLORS.text },
-});
+function createStyles(colors) {
+  return StyleSheet.create({
+    screen: { flex: 1, backgroundColor: colors.background, padding: SPACING.gutter },
+    row: { flexDirection: 'row', alignItems: 'center', gap: SPACING.md },
+    rowIcon: { width: 40, height: 40, borderRadius: 12, backgroundColor: colors.lightTealSurface, alignItems: 'center', justifyContent: 'center' },
+    flex: { flex: 1 },
+    rowTitle: { fontFamily: FONT.bold, fontSize: FONT_SIZE.body, color: colors.text },
+    rowHint: { fontFamily: FONT.regular, fontSize: FONT_SIZE.label, color: colors.textLight, marginTop: 2 },
+    spaced: { marginTop: SPACING.md },
+    cardTitle: { fontFamily: FONT.bold, fontSize: FONT_SIZE.title, color: colors.text },
+    langRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: SPACING.md },
+    langLabel: { fontFamily: FONT.bold, fontSize: FONT_SIZE.body, color: colors.text },
+  });
+}
