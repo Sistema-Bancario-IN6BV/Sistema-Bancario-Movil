@@ -2,6 +2,7 @@
   "name": "banco-movil",
   "version": "1.0.0",
   "main": "index.js",
+  "packageManager": "pnpm@10.29.3",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
