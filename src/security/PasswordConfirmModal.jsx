@@ -42,7 +42,7 @@ export default function PasswordConfirmModal({ visible, onSuccess, onClose }) {
     try {
       const res = await verifyPassword(password);
       if (!res.ok) {
-        setError(t('security.incorrectPassword'));
+        setError(res.error || t('security.incorrectPassword'));
         return;
       }
       reset();
