@@ -45,3 +45,11 @@ export function formatDateShort(value) {
     year: 'numeric',
   });
 }
+
+// Extrae las iniciales (nombre + apellido) para el avatar de fallback.
+export function getInitials(name, surname) {
+  const first = String(name ?? '').trim().charAt(0);
+  const last = String(surname ?? '').trim().charAt(0);
+  const initials = `${first}${last}`.toUpperCase();
+  return initials || '?';
+}

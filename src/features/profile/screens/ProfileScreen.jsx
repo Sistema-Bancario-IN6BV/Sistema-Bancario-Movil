@@ -1,11 +1,12 @@
 // src/features/profile/screens/ProfileScreen.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { View, Text, ScrollView, Image, Pressable, StyleSheet, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useForm, Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
-import { COLORS, SPACING, RADIUS, FONT, FONT_SIZE } from '@/shared/constants/theme';
+import { SPACING, RADIUS, FONT, FONT_SIZE } from '@/shared/constants/theme';
+import { useColors } from '@/shared/theme/ThemeProvider';
 import { Card, LoadingSpinner, Divider, ErrorText } from '@/shared/components/common/Common';
 import Input from '@/shared/components/common/Input';
 import Button from '@/shared/components/common/Button';
@@ -15,6 +16,8 @@ import { getInitials } from '@/shared/utils/format';
 
 export default function ProfileScreen({ navigation }) {
   const { t } = useTranslation();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { profile, loading, error, updateClientProfile } = useProfile();
   const logout = useAuthStore((s) => s.logout);
 
@@ -88,7 +91,7 @@ export default function ProfileScreen({ navigation }) {
           <Text style={styles.cardTitle}>{t('profile.personalInfo')}</Text>
           {!editing ? (
             <Pressable onPress={() => setEditing(true)} hitSlop={8} style={styles.editBtn}>
-              <MaterialIcons name="edit" size={18} color={COLORS.secondary} />
+              <MaterialIcons name="edit" size={18} color={colors.secondary} />
               <Text style={styles.editText}>{t('common.edit')}</Text>
             </Pressable>
           ) : null}
@@ -161,6 +164,8 @@ function EditField({ control, name, label, error, rules, ...props }) {
 }
 
 function ReadRow({ label, value }) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <View style={styles.readRow}>
       <Text style={styles.readLabel}>{label}</Text>
@@ -170,36 +175,40 @@ function ReadRow({ label, value }) {
 }
 
 function LinkRow({ icon, label, onPress }) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <Pressable onPress={onPress} style={({ pressed }) => [styles.linkRow, pressed && styles.pressed]}>
-      <MaterialIcons name={icon} size={20} color={COLORS.primary} />
+      <MaterialIcons name={icon} size={20} color={colors.primary} />
       <Text style={styles.linkLabel}>{label}</Text>
-      <MaterialIcons name="chevron-right" size={22} color={COLORS.textLight} />
+      <MaterialIcons name="chevron-right" size={22} color={colors.textLight} />
     </Pressable>
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: COLORS.background },
-  content: { padding: SPACING.gutter, paddingBottom: SPACING.xl },
-  header: { alignItems: 'center', marginBottom: SPACING.lg },
-  avatar: { width: 88, height: 88, borderRadius: 44 },
-  avatarFallback: { width: 88, height: 88, borderRadius: 44, backgroundColor: COLORS.primary, alignItems: 'center', justifyContent: 'center' },
-  avatarInitials: { fontFamily: FONT.bold, fontSize: FONT_SIZE.headline, color: COLORS.onPrimary },
-  name: { fontFamily: FONT.bold, fontSize: FONT_SIZE.title, color: COLORS.text, marginTop: SPACING.sm },
-  username: { fontFamily: FONT.regular, fontSize: FONT_SIZE.body, color: COLORS.textLight },
-  cardHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: SPACING.sm },
-  cardTitle: { fontFamily: FONT.bold, fontSize: FONT_SIZE.title, color: COLORS.text },
-  editBtn: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  editText: { fontFamily: FONT.bold, fontSize: FONT_SIZE.label, color: COLORS.secondary },
-  editActions: { flexDirection: 'row', gap: SPACING.sm, marginTop: SPACING.sm },
-  flex: { flex: 1 },
-  spaced: { marginTop: SPACING.md },
-  readRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: SPACING.sm },
-  readLabel: { fontFamily: FONT.regular, fontSize: FONT_SIZE.body, color: COLORS.textLight },
-  readValue: { fontFamily: FONT.bold, fontSize: FONT_SIZE.body, color: COLORS.text, maxWidth: '60%', textAlign: 'right' },
-  linkRow: { flexDirection: 'row', alignItems: 'center', gap: SPACING.md, paddingVertical: SPACING.md },
-  pressed: { opacity: 0.7 },
-  linkLabel: { flex: 1, fontFamily: FONT.bold, fontSize: FONT_SIZE.body, color: COLORS.text },
-  logout: { marginTop: SPACING.lg },
-});
+function createStyles(colors) {
+  return StyleSheet.create({
+    screen: { flex: 1, backgroundColor: colors.background },
+    content: { padding: SPACING.gutter, paddingBottom: SPACING.xl },
+    header: { alignItems: 'center', marginBottom: SPACING.lg },
+    avatar: { width: 88, height: 88, borderRadius: 44 },
+    avatarFallback: { width: 88, height: 88, borderRadius: 44, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
+    avatarInitials: { fontFamily: FONT.bold, fontSize: FONT_SIZE.headline, color: colors.onPrimary },
+    name: { fontFamily: FONT.bold, fontSize: FONT_SIZE.title, color: colors.text, marginTop: SPACING.sm },
+    username: { fontFamily: FONT.regular, fontSize: FONT_SIZE.body, color: colors.textLight },
+    cardHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: SPACING.sm },
+    cardTitle: { fontFamily: FONT.bold, fontSize: FONT_SIZE.title, color: colors.text },
+    editBtn: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+    editText: { fontFamily: FONT.bold, fontSize: FONT_SIZE.label, color: colors.secondary },
+    editActions: { flexDirection: 'row', gap: SPACING.sm, marginTop: SPACING.sm },
+    flex: { flex: 1 },
+    spaced: { marginTop: SPACING.md },
+    readRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: SPACING.sm },
+    readLabel: { fontFamily: FONT.regular, fontSize: FONT_SIZE.body, color: colors.textLight },
+    readValue: { fontFamily: FONT.bold, fontSize: FONT_SIZE.body, color: colors.text, maxWidth: '60%', textAlign: 'right' },
+    linkRow: { flexDirection: 'row', alignItems: 'center', gap: SPACING.md, paddingVertical: SPACING.md },
+    pressed: { opacity: 0.7 },
+    linkLabel: { flex: 1, fontFamily: FONT.bold, fontSize: FONT_SIZE.body, color: colors.text },
+    logout: { marginTop: SPACING.lg },
+  });
+}
