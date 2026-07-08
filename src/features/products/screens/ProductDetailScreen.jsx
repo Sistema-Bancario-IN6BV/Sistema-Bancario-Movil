@@ -1,10 +1,11 @@
 // src/features/products/screens/ProductDetailScreen.jsx
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
-import { COLORS, SPACING, RADIUS, FONT, FONT_SIZE } from '@/shared/constants/theme';
+import { SPACING, RADIUS, FONT, FONT_SIZE } from '@/shared/constants/theme';
+import { useColors } from '@/shared/theme/ThemeProvider';
 import { Card, CurrencyText, Divider, ErrorText, MaskedNumber } from '@/shared/components/common/Common';
 import Button from '@/shared/components/common/Button';
 import { useAccountStore } from '@/shared/store/accountStore';
@@ -16,6 +17,8 @@ import { formatCurrency } from '@/shared/utils/format';
 
 export default function ProductDetailScreen({ route, navigation }) {
   const { t } = useTranslation();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { product } = route.params || {};
   const accounts = useAccountStore((s) => s.accounts);
   const fetchAccounts = useAccountStore((s) => s.fetchAccounts);
@@ -122,6 +125,8 @@ export default function ProductDetailScreen({ route, navigation }) {
 }
 
 function Row({ label, value }) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <View style={styles.row}>
       <Text style={styles.rowLabel}>{label}</Text>
@@ -131,12 +136,14 @@ function Row({ label, value }) {
 }
 
 function SelectableRow({ selected, onPress, title, right }) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <Pressable onPress={onPress} style={[styles.selRow, selected && styles.selRowActive]}>
       <MaterialIcons
         name={selected ? 'radio-button-checked' : 'radio-button-unchecked'}
         size={20}
-        color={selected ? COLORS.primary : COLORS.outlineVariant}
+        color={selected ? colors.primary : colors.outlineVariant}
       />
       <View style={styles.selRowTitle}>{title}</View>
       {right}
@@ -144,29 +151,31 @@ function SelectableRow({ selected, onPress, title, right }) {
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: COLORS.background },
-  content: { padding: SPACING.gutter, paddingBottom: SPACING.xl },
-  name: { fontFamily: FONT.bold, fontSize: FONT_SIZE.title, color: COLORS.text },
-  description: { fontFamily: FONT.regular, fontSize: FONT_SIZE.body, color: COLORS.textLight, marginTop: SPACING.xs },
-  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: SPACING.sm + 2 },
-  rowLabel: { fontFamily: FONT.regular, fontSize: FONT_SIZE.body, color: COLORS.textLight },
-  rowValue: { fontFamily: FONT.bold, fontSize: FONT_SIZE.body, color: COLORS.text },
-  label: { fontFamily: FONT.bold, fontSize: FONT_SIZE.label, color: COLORS.textVariant, marginBottom: SPACING.sm },
-  spaced: { marginTop: SPACING.md },
-  selRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: SPACING.sm,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.md,
-    padding: SPACING.md,
-    marginBottom: SPACING.sm,
-  },
-  selRowActive: { borderColor: COLORS.primary },
-  selRowTitle: { flex: 1 },
-  rowBalance: { fontSize: FONT_SIZE.body, color: COLORS.textLight },
-  confirmBtn: { marginTop: SPACING.md },
-});
+function createStyles(colors) {
+  return StyleSheet.create({
+    screen: { flex: 1, backgroundColor: colors.background },
+    content: { padding: SPACING.gutter, paddingBottom: SPACING.xl },
+    name: { fontFamily: FONT.bold, fontSize: FONT_SIZE.title, color: colors.text },
+    description: { fontFamily: FONT.regular, fontSize: FONT_SIZE.body, color: colors.textLight, marginTop: SPACING.xs },
+    row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: SPACING.sm + 2 },
+    rowLabel: { fontFamily: FONT.regular, fontSize: FONT_SIZE.body, color: colors.textLight },
+    rowValue: { fontFamily: FONT.bold, fontSize: FONT_SIZE.body, color: colors.text },
+    label: { fontFamily: FONT.bold, fontSize: FONT_SIZE.label, color: colors.textVariant, marginBottom: SPACING.sm },
+    spaced: { marginTop: SPACING.md },
+    selRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: SPACING.sm,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: RADIUS.md,
+      padding: SPACING.md,
+      marginBottom: SPACING.sm,
+    },
+    selRowActive: { borderColor: colors.primary },
+    selRowTitle: { flex: 1 },
+    rowBalance: { fontSize: FONT_SIZE.body, color: colors.textLight },
+    confirmBtn: { marginTop: SPACING.md },
+  });
+}

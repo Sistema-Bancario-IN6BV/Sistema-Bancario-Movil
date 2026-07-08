@@ -1,15 +1,19 @@
 // src/features/products/screens/PurchaseReceiptScreen.jsx
+import { useMemo } from 'react';
 import { View, Text, StyleSheet, Share } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
-import { COLORS, SPACING, FONT, FONT_SIZE } from '@/shared/constants/theme';
+import { SPACING, FONT, FONT_SIZE } from '@/shared/constants/theme';
+import { useColors } from '@/shared/theme/ThemeProvider';
 import { Card, CurrencyText, Divider } from '@/shared/components/common/Common';
 import Button from '@/shared/components/common/Button';
 import { formatCurrency, formatDate } from '@/shared/utils/format';
 
 export default function PurchaseReceiptScreen({ route, navigation }) {
   const { t } = useTranslation();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { receipt } = route.params || {};
 
   if (!receipt) return null;
@@ -32,7 +36,7 @@ export default function PurchaseReceiptScreen({ route, navigation }) {
     <View style={styles.screen}>
       <View style={styles.successHeader}>
         <View style={styles.check}>
-          <MaterialIcons name="check" size={36} color={COLORS.onPrimary} />
+          <MaterialIcons name="check" size={36} color={colors.onPrimary} />
         </View>
         <Text style={styles.successText}>{t('products.purchaseDone')}</Text>
         <CurrencyText value={receipt.amount} style={styles.amount} />
@@ -54,6 +58,8 @@ export default function PurchaseReceiptScreen({ route, navigation }) {
 }
 
 function Row({ label, value }) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <View style={styles.row}>
       <Text style={styles.rowLabel}>{label}</Text>
@@ -62,15 +68,17 @@ function Row({ label, value }) {
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: COLORS.background, padding: SPACING.gutter },
-  successHeader: { alignItems: 'center', paddingVertical: SPACING.lg, gap: SPACING.sm },
-  check: { width: 72, height: 72, borderRadius: 36, backgroundColor: COLORS.success, alignItems: 'center', justifyContent: 'center' },
-  successText: { fontFamily: FONT.bold, fontSize: FONT_SIZE.title, color: COLORS.text },
-  amount: { fontFamily: FONT.bold, fontSize: FONT_SIZE.display, color: COLORS.primary },
-  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: SPACING.sm + 2 },
-  rowLabel: { fontFamily: FONT.regular, fontSize: FONT_SIZE.body, color: COLORS.textLight },
-  rowValue: { fontFamily: FONT.bold, fontSize: FONT_SIZE.body, color: COLORS.text, maxWidth: '60%', textAlign: 'right' },
-  share: { marginTop: SPACING.lg },
-  close: { marginTop: SPACING.sm },
-});
+function createStyles(colors) {
+  return StyleSheet.create({
+    screen: { flex: 1, backgroundColor: colors.background, padding: SPACING.gutter },
+    successHeader: { alignItems: 'center', paddingVertical: SPACING.lg, gap: SPACING.sm },
+    check: { width: 72, height: 72, borderRadius: 36, backgroundColor: colors.success, alignItems: 'center', justifyContent: 'center' },
+    successText: { fontFamily: FONT.bold, fontSize: FONT_SIZE.title, color: colors.text },
+    amount: { fontFamily: FONT.bold, fontSize: FONT_SIZE.display, color: colors.primary },
+    row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: SPACING.sm + 2 },
+    rowLabel: { fontFamily: FONT.regular, fontSize: FONT_SIZE.body, color: colors.textLight },
+    rowValue: { fontFamily: FONT.bold, fontSize: FONT_SIZE.body, color: colors.text, maxWidth: '60%', textAlign: 'right' },
+    share: { marginTop: SPACING.lg },
+    close: { marginTop: SPACING.sm },
+  });
+}
