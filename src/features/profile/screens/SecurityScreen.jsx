@@ -11,7 +11,10 @@ import { useSecurityStore } from '@/security/securityStore';
 import { biometricAvailable } from '@/security/biometric';
 import PinModal from '@/security/PinModal';
 import PasswordConfirmModal from '@/security/PasswordConfirmModal';
+import { useThemeStore } from '@/shared/store/themeStore';
 import i18n, { setAppLanguage } from '@/shared/i18n';
+
+const APPEARANCE_OPTIONS = ['light', 'dark', 'system'];
 
 export default function SecurityScreen() {
   const { t } = useTranslation();
@@ -21,6 +24,9 @@ export default function SecurityScreen() {
   const hasPin = useSecurityStore((s) => s.hasPin);
   const setBiometricEnabled = useSecurityStore((s) => s.setBiometricEnabled);
   const load = useSecurityStore((s) => s.load);
+
+  const themeMode = useThemeStore((s) => s.mode);
+  const setThemeMode = useThemeStore((s) => s.setMode);
 
   const [available, setAvailable] = useState(false);
   const [pinVisible, setPinVisible] = useState(false);
@@ -82,6 +88,20 @@ export default function SecurityScreen() {
         <Divider />
         <LangOption label={t('profile.spanish')} active={lang?.startsWith('es')} onPress={() => changeLanguage('es')} />
         <LangOption label={t('profile.english')} active={lang?.startsWith('en')} onPress={() => changeLanguage('en')} />
+      </Card>
+
+      {/* Apariencia */}
+      <Card style={styles.spaced}>
+        <Text style={styles.cardTitle}>{t('profile.appearance')}</Text>
+        <Divider />
+        {APPEARANCE_OPTIONS.map((option) => (
+          <LangOption
+            key={option}
+            label={t(`profile.appearance${option.charAt(0).toUpperCase()}${option.slice(1)}`)}
+            active={themeMode === option}
+            onPress={() => setThemeMode(option)}
+          />
+        ))}
       </Card>
 
       <PasswordConfirmModal
