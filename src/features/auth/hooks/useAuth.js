@@ -6,7 +6,8 @@ import { ENDPOINTS } from '@/shared/constants/endpoints';
 import { useAuthStore } from '@/shared/store/authStore';
 
 function readError(err, fallback) {
-  return err?.response?.data?.message || err?.response?.data?.title || fallback;
+  if (!err?.response) return 'No pudimos conectar con el servidor. Verifica tu conexión.';
+  return err.response.data?.message || err.response.data?.title || fallback;
 }
 
 export function useAuth() {
